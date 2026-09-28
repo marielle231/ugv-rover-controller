@@ -1,8 +1,9 @@
 import pygame
 import time
 import socketio
+import requests
 
-ROVER_IP = "VUL_HIER_HET_IP_ADRES_IN"
+ROVER_IP = "145.52.127.158"
 
 pygame.init()
 pygame.joystick.init()
@@ -57,8 +58,20 @@ try:
             # buttons
             if event.type == pygame.JOYBUTTONDOWN:
 
+                if event.button == 2:
+                    tekst = input("Wat moet de rover zeggen? ")
+                    if tekst.strip():
+                        requests.post(
+                            f"http://{ROVER_IP}:5000/send_command",
+                            data={"command": f"audio -s {tekst}"},
+                        )
+
                 # afsluiten
                 if event.button == 7:
+                    requests.post(
+                        f"http://{ROVER_IP}:5000/send_command",
+                        data={"command": "audio -s UGV Rover is shutting down"},
+                    )
                     running = False
 
                 # chassislamp
